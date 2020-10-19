@@ -31,7 +31,13 @@
   text-align: center;
   font-size: 0.8em;
 }
-
+.img-notselected{
+  height: 80px;
+  filter: grayscale(100%);
+}
+.img-selected{
+  height: 80px;
+}
 ::-webkit-scrollbar {
   display: none;
 }

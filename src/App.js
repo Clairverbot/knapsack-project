@@ -1,39 +1,43 @@
 import React, { Component } from "react";
 import "./App.css";
+import { knapsack } from "./knapsack";
+const playersJson = require("./assets/players.json");
+
+// var solver = require("javascript-lp-solver/src/solver");
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      budget: 10000,
+      budget: 10,
       allPlayers: [],
-      t: [],
+      selectedId: [],
     };
     this.handleCalculation = this.handleCalculation.bind(this);
   }
   handleCalculation(e) {
     e.preventDefault();
-    let player = [],
-      point = [],
-      cost = [],
-      gk = [],
-      def = [],
-      mid = [],
-      attk = [];
-    const playersJson = require("./assets/players.json");
-    playersJson.forEach((p, i) => {
-      player.push(i);
-      point.push({ i: p.points });
-      cost.push({ i: p.cost });
-      gk.push({ i: p.position === "Goalkeeper" });
-      def.push({ i: p.position === "Defender" });
-      mid.push({ i: p.position === "Midfielder" });
-      attk.push({ i: p.position === "Attacker" });
-    });
+    fetch("/knapsack/" + this.state.budget)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        let total_cost = Object.values(data.cost).reduce((a, b) => a + b);
+        console.log(total_cost);
+        if (total_cost > this.state.budget) {
+          alert("insufficient budget");
+        } else {
+          let total_points = Object.values(data.points).reduce((a, b) => a + b);
+          this.setState({
+            selectedId: Object.keys(data.selected),
+            totalPoints: total_points,
+            totalCost: total_cost,
+          });
+        }
+      });
   }
+
   componentDidMount() {
     let allPlayersArr = [];
-    const playersJson = require("./assets/players.json");
     // todo: make a csv file and iterate through it
     for (let i = 0; i < playersJson.length; i++) {
       allPlayersArr.push({
@@ -63,6 +67,12 @@ class App extends Component {
             </label>
             <input type="submit" value="Calculate" />
           </form>
+          {this.state.totalPoints && this.state.totalCost ? (
+            <div>
+              <p>Total Points:&nbsp;{this.state.totalPoints}</p>
+              <p>Total Cost:&nbsp;{this.state.totalCost}</p>
+            </div>
+          ) : null}
           <div>
             Icons made by{" "}
             <a
@@ -90,7 +100,11 @@ class App extends Component {
                 <img
                   src={require(`${player.imgUrl}`)}
                   alt={player.name}
-                  style={{ height: 80 }}
+                  className={
+                    this.state.selectedId.includes(i.toString())
+                      ? "img-selected"
+                      : "img-notselected"
+                  }
                 />
                 <p>
                   {player.name}
@@ -98,6 +112,8 @@ class App extends Component {
                   Price: ${player.price}
                   <br />
                   Points: {player.points}
+                  <br />
+                  {player.position}
                 </p>
               </div>
             );
