@@ -7,28 +7,21 @@
 .calculator-container {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  margin-left:8%;
   justify-content: space-around;
   flex-direction: column;
+}
+.budget-container{
+  width: 80%;
 }
 .link {
   color: #61dafb;
 }
 .right-panel-container {
-  display: grid;
-  grid-template-rows: 3fr 1fr;
-}
-.football-container {
-  background-image: url("./assets/football-bg.jpg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center; 
-}
-.all-players-container {
   display: flex;
-  max-width: 100%;
-  overflow-x: auto;
+  flex-wrap: wrap;
 }
+
 .player-container{
   margin:8px;
   display: flex;
